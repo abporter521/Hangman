@@ -2,40 +2,51 @@
 import os
 import random
 
-def create_dictionary(filepath:str) -> bool:
-    """This function will create a dictionary of words if one does not exist 
-       Assumes the file is part of the filepath   
-    """
+class Dictionary:
+    def __init__(self, filepath:str):
+        self.location = filepath
+        self.created = self.create_dictionary()
 
-    if os.path.exists(filepath):
-        return True
-    
-    if not os.path.exists(filepath):
-        #TODO: MAKE FILEPATH
-        os.makedirs(filepath)
+    def create_dictionary(self) -> bool:
+        """This function will create a dictionary of words if one does not exist 
+        Assumes the file is part of the filepath   
+        """
 
-        # Gather list of words
-        f = open(filepath, mode="w")
-        f.write("<Add words to me!>\nthis\nis\nthe\nsmallest\ndictionary\nthat\nI\ncan\nthink\nof")
-        f.close()
-        return True
-
-    return False
-
-def choose_word(filepath:str):
-
-    # Open file
-    with open({filepath}, mode='r') as file:
-        lines = file.readlines()
-        linecount = len(lines)
+        if os.path.isfile(self.location):
+            return True
         
-        # Randomly choose number and select word
-        wordchoice = random.randrange(start=1, stop=linecount)
+        try:
+            directory = os.path.dirname(self.location)
+            
+            if not os.path.exists(directory):           
+                os.makedirs(directory)
 
-        for _ in range(wordchoice):
-            secretword = file.readline()
+            # Gather list of words
+            words = ['<Add words to me!>','this','is','the','smallest','dictionary','that','I','can','think','of']
+            with open(self.location, mode='w') as f:
+                f.write("\n".join(words))
+                f.close()
 
-        file.close()
+            return True
         
-    # Return word
-    return secretword
+        except:
+            return False
+
+    def choose_word(self):
+        # Open file
+        with open(self.location, mode='r') as file:
+            lines = file.readlines()
+            linecount = len(lines)
+            
+            # Randomly choose number and select word
+            wordchoice = random.randrange(start=1, stop=linecount)
+
+            file.seek(0)
+
+            for _ in range(wordchoice+1):
+                secretword = file.readline()
+
+            file.close()
+            
+        # Return word
+        return secretword
